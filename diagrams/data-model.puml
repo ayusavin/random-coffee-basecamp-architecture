@@ -1,0 +1,61 @@
+@startuml
+!define table(x) class x << (T,#FFAAAA) >>
+!define primary_key(x) <u>x</u>
+hide methods
+hide stereotypes
+
+table(User) {
+  + primary_key(id)
+  --
+  firstName: String
+  lastName: String
+  rating: Object
+  createdAt: Date
+  updatedAt: Date
+}
+
+table(Location) {
+  + primary_key(id)
+  --
+  userId: ObjectId
+  coordinates: Point
+  radius: Number
+  address: String
+  name: String
+}
+
+table(Meeting) {
+  + primary_key(id)
+  --
+  location: Object
+  scheduledAt: Date
+  status: String
+  createdAt: Date
+  updatedAt: Date
+}
+
+table(Rating) {
+  + primary_key(id)
+  --
+  meetingId: ObjectId
+  fromUserId: ObjectId
+  toUserId: ObjectId
+  numericalRating: Number
+  characteristics: Array
+  comment: String
+  createdAt: Date
+}
+
+table(Interest) {
+  + primary_key(id)
+  --
+  name: String
+  category: String
+  active: Boolean
+}
+
+User "1" -- "0..*" Location
+User "1" -- "0..*" Meeting
+Meeting "1" -- "0..*" Rating
+User "1" -- "0..*" Interest
+@enduml

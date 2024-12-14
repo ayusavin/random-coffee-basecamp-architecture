@@ -1,0 +1,46 @@
+@startuml C4 Component
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+LAYOUT_WITH_LEGEND()
+
+Container_Boundary(bot_app, "Bot Application") {
+    Component(bot_core, "Bot Core", "GrammyJS", "Обработка входящих сообщений")
+    Component(command_handlers, "Command Handlers", "TypeScript", "Обработчики команд")
+    Component(conversation_handlers, "Conversation Handlers", "TypeScript", "Управление диалогами")
+    Component(middleware, "Middleware", "TypeScript", "Аутентификация, логирование")
+    
+    Component(user_service, "User Service", "TypeScript", "Работа с пользователями")
+    Component(location_service, "Location Service", "TypeScript", "Работа с локациями")
+    Component(rating_service, "Rating Service", "TypeScript", "Работа с рейтингами")
+    Component(matching_service, "Matching Service", "TypeScript", "Поиск и подбор пар")
+    Component(state_service, "State Service", "TypeScript", "Управление состояниями")
+    Component(scheduler, "Scheduler", "TypeScript", "Планировщик отложенных задач")
+}
+
+ContainerDb(postgres, "PostgreSQL")
+ContainerDb(deno_kv, "Deno KV")
+System_Ext(telegram, "Telegram")
+System_Ext(maps, "Maps API")
+
+Rel(telegram, bot_core, "События")
+Rel(bot_core, command_handlers, "Передает команды")
+Rel(bot_core, conversation_handlers, "Передает сообщения")
+Rel(bot_core, middleware, "Проходит через")
+
+Rel(command_handlers, user_service, "Использует")
+Rel(command_handlers, location_service, "Использует")
+Rel(command_handlers, rating_service, "Использует")
+Rel(command_handlers, matching_service, "Запускает поиск пары")
+
+Rel(conversation_handlers, state_service, "Управляет состоянием")
+Rel(scheduler, matching_service, "Запускает повторный поиск")
+
+Rel(location_service, maps, "Запрашивает данные")
+Rel(user_service, postgres, "Читает/пишет")
+Rel(rating_service, postgres, "Читает/пишет")
+Rel(matching_service, postgres, "Читает данные")
+Rel(state_service, deno_kv, "Читает/пишет состояния")
+Rel(state_service, postgres, "Читает данные для восстановления состояний", "При сбое кэша")
+Rel(scheduler, deno_kv, "Управляет очередью задач")
+
+@enduml 

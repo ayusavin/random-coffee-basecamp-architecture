@@ -1,0 +1,23 @@
+@startuml C4 Container
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+LAYOUT_WITH_LEGEND()
+
+Person(user, "Пользователь", "Человек, ищущий собеседника для встречи")
+System_Ext(telegram, "Telegram", "Платформа для обмена сообщениями")
+System_Ext(maps, "Maps API", "Геокодинг и работа с локациями")
+
+System_Boundary(random_coffee, "Random Coffee Bot") {
+    Container(bot_app, "Bot Application", "Deno, TypeScript, GrammyJS", "Основная логика бота")
+    ContainerDb(postgres, "Database", "PostgreSQL + PostGIS", "Хранение данных пользователей, встреч и рейтингов")
+    ContainerDb(deno_kv, "State Store", "Deno KV", "Хранение состояний и очереди задач")
+}
+
+Rel(user, telegram, "Использует")
+Rel(telegram, bot_app, "Передает сообщения", "Telegram Bot API")
+Rel(bot_app, telegram, "Отправляет ответы", "Telegram Bot API")
+Rel(bot_app, maps, "Получает информацию о локациях", "REST API")
+Rel(bot_app, postgres, "Читает/пишет данные", "PostgreSQL Driver")
+Rel(bot_app, deno_kv, "Управляет состояниями", "Deno KV API")
+
+@enduml 

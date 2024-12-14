@@ -1,0 +1,16 @@
+@startuml C4 Context
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+LAYOUT_WITH_LEGEND()
+
+Person(user, "Пользователь", "Человек, ищущий собеседника для встречи")
+System(random_coffee, "Random Coffee Bot", "Telegram бот для организации встреч")
+System_Ext(telegram, "Telegram", "Платформа для обмена сообщениями")
+System_Ext(maps, "Maps API", "Геокодинг и работа с локациями")
+
+Rel(user, telegram, "Использует")
+Rel(telegram, random_coffee, "Передает сообщения", "Telegram Bot API")
+Rel(random_coffee, telegram, "Отправляет ответы", "Telegram Bot API")
+Rel(random_coffee, maps, "Получает информацию о локациях", "REST API")
+
+@enduml 
